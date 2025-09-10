@@ -8,7 +8,6 @@ class User extends Migration
 {
     public function up()
     {
-        // user
         $this->forge->addField([
             'id'          => ['type' => 'INT', 'unsigned' => true, 'auto_increment' => true],
             'email'       => ['type' => 'VARCHAR', 'constraint' => 255],

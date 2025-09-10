@@ -4,7 +4,7 @@ namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
-class User extends Migration
+class File extends Migration
 {
     public function up()
     {
@@ -12,10 +12,8 @@ class User extends Migration
             'id'          => ['type' => 'INT', 'unsigned' => true, 'auto_increment' => true],
             'id_owner'    => ['type' => 'INT', 'unsigned' => true],
             'name'        => ['type' => 'VARCHAR', 'constraint' => 255],
-            'path'        => ['type' => 'VARCHAR', 'constraint' => 255],
             'type'        => ['type' => 'VARCHAR', 'constraint' => 255],
             'is_deleted'  => ['type' => 'BOOLEAN'],
-            'is_public'   => ['type' => 'BOOLEAN'],
         ]);
         $this->forge->addKey('id', true);
         $this->forge->createTable('file');
