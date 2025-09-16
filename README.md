@@ -29,7 +29,7 @@ Frontend:
 Backend:
 
   * Framework: CodeIgniter 4 (PHP 8+)
-  * Arquitetura: MVC + Repository/Service
+  * Arquitetura: MVC + Repository/Service/Entity
   * Configuração: .env para variáveis sensíveis
 
 Banco de Dados:
@@ -94,3 +94,4 @@ Configurar o .env:
 * Implementar autenticação
 * Criar rotas básicas no backend
 * Integração inicial frontend-backend
+
