@@ -43,7 +43,6 @@ class FileRepository
         }
     }
 
-    // add sorting by type, date, name
     public function findByOwnerId(int $ownerId): array|null
     {
         try {
@@ -56,21 +55,53 @@ class FileRepository
         }
     }
 
-    // add sorting name by levenshtein distance
-    public function findByNameAndOwnerId(string $name, int $ownerId): array|null
+    // add sorting by levenshtein distance
+    public function findByNameAndOwnerId(string $name, int $ownerId): ?array
     {
         try {
             if (empty($name) || !is_string($name)) return null;
             if (empty($ownerId) || !is_int($ownerId)) return null;
 
-            return $this->fileModel->where('name', $name)->where('owner_id', $ownerId)->findAll();
+            // Step 1: Fetch possible matches (use LIKE for flexibility)
+            $rows = $this->fileModel
+                ->where('owner_id', $ownerId)
+                ->like('name', $name) // broader than exact match
+                ->findAll();
+
+            if (empty($rows)) {
+                return null;
+            }
+
+            $files = [];
+
+            // Step 2: Compute match percentage
+            foreach ($rows as $row) {
+                $levenshteinDistance = levenshtein($name, $row->name); 
+                $maxLength = max(strlen($name), strlen($row->name));
+
+                $matchPercentage = ($maxLength === 0) 
+                    ? 100 
+                    : (1 - ($levenshteinDistance / $maxLength)) * 100;
+
+                $files[] = [
+                    'file' => $row,
+                    'matchPercentage' => round($matchPercentage, 2)
+                ];
+            }
+
+            // Step 3: Sort descending by match %
+            usort($files, fn($a, $b) => $b['matchPercentage'] <=> $a['matchPercentage']);
+
+            // Step 4: Return only the File entities/models
+            return array_map(fn($f) => $f['file'], $files);
+
         } catch (Throwable $e) {
             log_message('error', 'Error finding file by name and owner ID: ' . $e->getMessage());
             return null;
         }
     }
 
-    // add sorting by date, name
+
     public function findByTypeAndOwnerId(string $type, int $ownerId): array|null
     {
         try {

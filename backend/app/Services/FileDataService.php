@@ -10,8 +10,7 @@ use App\Repositories\TagRepository;
 use App\Repositories\FileTagsRepository;
 use Config\Database;
 
-
-class FileUploadService
+class FileDataService
 {
     protected $fileRepository;
     protected $tagRepository;
@@ -75,7 +74,38 @@ class FileUploadService
             log_message('error', 'Error uploading file with tags: ' . $e->getMessage());
             return null;
         }
-    }   
+    }
+    
+    public function getFileById(int $fileId): ?string
+    {
+        try {
+            if ($fileId <= 0) {
+                return null;
+            }
+
+            // Step 1: get metadata from DB
+            $fileEntity = $this->fileRepository->findById($fileId);
+            if (!$fileEntity) {
+                return null; // file not found in DB
+            }
+
+            // Step 2: build file path
+            $filePath = WRITEPATH . 'uploads/' . $fileEntity->getName();
+
+            if (!is_file($filePath)) {
+                log_message('error', "File not found on disk: {$filePath}");
+                return null;
+            }
+
+            // Step 3: return contents (or you could return path or stream)
+            return file_get_contents($filePath);
+
+        } catch (\Throwable $e) {
+            log_message('error', 'Error reading file by ID: ' . $e->getMessage());
+            return null;
+        }
+    }
+
 
     public function downloadFile(int $fileId)
     {

@@ -23,7 +23,7 @@ class FileTagsRepository
                                           ->where('tag_id', $fileTag->getIdTag())
                                           ->first();
             if ($exists) {
-                return null; // Association already exists
+                return $exists; // Association already exists
             }
 
             $this->fileTagsModel->insert($fileTag);

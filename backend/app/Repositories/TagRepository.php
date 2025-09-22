@@ -44,11 +44,48 @@ class TagRepository
     public function findByNameAndOwnerId(string $name, int $ownerId): ?TagEntity
     {
         try {
-            return $this->tagModel->where('name', $name)->where('owner_id', $ownerId)->first();
-        } catch (Throwable) {
+            if (empty($name) || !is_string($name)) return null;
+            if (empty($ownerId) || !is_int($ownerId)) return null;
+
+            // Step 1: Fetch candidates
+            $rows = $this->tagModel
+                ->where('owner_id', $ownerId)
+                ->like('name', $name)
+                ->findAll();
+
+            if (empty($rows)) {
+                return null;
+            }
+
+            $tags = [];
+
+            // Step 2: Compute match percentage
+            foreach ($rows as $row) {
+                $levenshteinDistance = levenshtein($name, $row->name);
+                $maxLength = max(strlen($name), strlen($row->name));
+
+                $matchPercentage = ($maxLength === 0) 
+                    ? 100 
+                    : (1 - ($levenshteinDistance / $maxLength)) * 100;
+
+                $tags[] = [
+                    'tag' => $row,
+                    'matchPercentage' => round($matchPercentage, 2)
+                ];
+            }
+
+            // Step 3: Sort by match %
+            usort($tags, fn($a, $b) => $b['matchPercentage'] <=> $a['matchPercentage']);
+
+            // Step 4: Return only the best match (highest similarity)
+            return $tags[0]['tag'];
+
+        } catch (Throwable $e) {
+            log_message('error', 'Error finding tag by name and owner ID: ' . $e->getMessage());
             return null;
         }
     }
+
 
     public function findById(int $id): ?TagEntity
     {
