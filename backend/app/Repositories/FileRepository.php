@@ -21,6 +21,8 @@ class FileRepository
             if (empty($file->getIdOwner()) || !is_int($file->getIdOwner())) return null;
             if (empty($file->getName()) || !is_string($file->getName())) return null;
             if (empty($file->getType()) || !is_string($file->getType())) return null;
+            if (empty($file->getPath()) || !is_string($file->getPath())) return null;
+            if (!is_bool($file->getIsDeleted())) return null;
 
             $this->fileModel->insert($file);
             $file->id = $this->fileModel->getInsertID();

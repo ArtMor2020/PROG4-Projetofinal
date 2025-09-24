@@ -106,7 +106,6 @@ class FileDataService
         }
     }
 
-
     public function downloadFile(int $fileId)
     {
         $file = $this->fileRepository->findById($fileId);

@@ -15,6 +15,7 @@ class FileModel extends Model
             'id_owner',
             'name',
             'type',
+            'path',
             'is_deleted',
     ];
 }

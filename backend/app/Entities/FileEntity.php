@@ -11,6 +11,7 @@ class FileEntity extends Entity
         'id_owner'    => null,
         'name'        => null,
         'type'        => null,
+        'path'        => null,
         'is_deleted'  => false,
     ];
 
@@ -51,6 +52,16 @@ class FileEntity extends Entity
     public function setType(string $type)
     {
         $this->attributes['type'] = $type;
+        return $this;
+    }
+
+    public function getPath()
+    {
+        return $this->attributes['path'];
+    }
+    public function setPath(string $path)
+    {
+        $this->attributes['path'] = $path;
         return $this;
     }
 

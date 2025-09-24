@@ -13,6 +13,7 @@ class File extends Migration
             'id_owner'    => ['type' => 'INT', 'unsigned' => true],
             'name'        => ['type' => 'VARCHAR', 'constraint' => 255],
             'type'        => ['type' => 'VARCHAR', 'constraint' => 255],
+            'path'        => ['type' => 'VARCHAR', 'constraint' => 255],
             'is_deleted'  => ['type' => 'BOOLEAN'],
         ]);
         $this->forge->addKey('id', true);
