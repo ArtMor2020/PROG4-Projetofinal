@@ -89,9 +89,6 @@ Configurar o .env:
 
 ## Proximos Passos
 
-* Definir requisitos funcionais detalhados
-* Criar seeds mínimas
 * Implementar autenticação
-* Criar rotas básicas no backend
 * Integração inicial frontend-backend
-
+* Debugging
