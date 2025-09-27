@@ -17,13 +17,17 @@ class TagRepository
     public function create(TagEntity $tag): ?TagEntity
     {
         try {
-            $exists = $this->findByNameAndOwnerId($tag->getName(), $tag->getIdOwner());
+            $exists = $this->tagModel->where('name', $tag->getName())
+                                    ->where('id_owner', $tag->getIdOwner())
+                                    ->first();
             if ($exists) {
+                log_message('info', 'Tag already exists with ID: ' . $exists->id);
                 return $exists;
             }
 
             $this->tagModel->insert($tag);
             $tag->setId($this->tagModel->getInsertID());
+            
             return $tag;
             
         } catch (Throwable) {
@@ -34,7 +38,7 @@ class TagRepository
     public function findAllByOwnerId(int $ownerId): array
     {
         try {
-            return $this->tagModel->where('owner_id', $ownerId)->findAll();
+            return $this->tagModel->where('id_owner', $ownerId)->findAll();
         } catch (Throwable) {
             return [];
         }
@@ -49,7 +53,7 @@ class TagRepository
 
             // Step 1: Fetch candidates
             $rows = $this->tagModel
-                ->where('owner_id', $ownerId)
+                ->where('id_owner', $ownerId)
                 ->like('name', $name)
                 ->findAll();
 

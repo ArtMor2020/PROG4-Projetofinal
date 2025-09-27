@@ -31,17 +31,22 @@ class FileDataController extends ResourceController
             }
 
             $fileData = $this->request->getFile('file');
-            $tagNames = $this->request->getVar('tags'); // array
+            $tagDataRaw = $this->request->getVar('tags'); // will be a JSON string
 
             if (!$fileData || !$fileData->isValid()) {
                 return $this->fail('Invalid or missing file.');
             }
 
-            if (!is_array($tagNames)) {
-                $tagNames = [];
+            // Decode JSON tags into array
+            $tagData = [];
+            if (!empty($tagDataRaw)) {
+                $tagData = json_decode($tagDataRaw, true);
+                if (!is_array($tagData)) {
+                    return $this->failValidationErrors('Invalid tags format, must be JSON array.');
+                }
             }
 
-            $fileEntity = $this->fileDataService->uploadFileWithTags($fileData, $tagNames, $loggedUserId);
+            $fileEntity = $this->fileDataService->uploadFileWithTags($fileData, $tagData, $loggedUserId);
 
             if (!$fileEntity) {
                 return $this->fail('Failed to upload file.');
@@ -77,7 +82,8 @@ class FileDataController extends ResourceController
             }
 
             $file = $this->fileRepository->findById($id);
-            if (!$file || $file->getIdOwner() !== $loggedUserId) {
+            if (!$file || $file->getIdOwner() != $loggedUserId) {
+                log_message('error', "Unauthorized access attempt by user {$loggedUserId} to file {$id}, owned by {$file?->getIdOwner()}");
                 return $this->failForbidden('You do not have permission to access this file.');
             }
 
@@ -114,7 +120,7 @@ class FileDataController extends ResourceController
             }
 
             $file = $this->fileRepository->findById($id);
-            if (!$file || $file->getIdOwner() !== $loggedUserId) {
+            if (!$file || $file->getIdOwner() != $loggedUserId) {
                 return $this->failForbidden('You do not have permission to download this file.');
             }
 

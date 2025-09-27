@@ -35,7 +35,7 @@ $routes->group('api', function(RouteCollection $routes) {
         $routes->get('files/(:num)', 'FileController::getFile/$1');             // get single file
         $routes->put('files/(:num)', 'FileController::updateFile/$1');          // update file
         $routes->delete('files/(:num)', 'FileController::deleteFile/$1');       // delete file
-        $routes->get('files/search', 'FileController::getFilesByName');         // search files by name
+        $routes->get('files/search/(:any)', 'FileController::getFilesByName/$1');         // search files by name
         $routes->get('files/type/(:any)', 'FileController::getFilesByType/$1'); // filter by type
 
         /**
@@ -45,7 +45,7 @@ $routes->group('api', function(RouteCollection $routes) {
          */
         $routes->post('file/upload', 'FileDataController::uploadFileWithTags');      // upload with tags
         $routes->get('file/(:num)', 'FileDataController::getFileById/$1');           // get base64 content
-        $routes->get('file/(:num)/download', 'FileDataController::downloadFile/$1'); // download file
+        $routes->get('download_file/(:num)', 'FileDataController::downloadFile/$1'); // download file
 
         /**
          * -----------------------

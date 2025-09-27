@@ -56,7 +56,7 @@ class TagController extends ResourceController
         }
 
         $tag = $this->tagRepository->findById($id);
-        if (!$tag || $tag->getIdOwner() !== $loggedUserId) {
+        if (!$tag || $tag->getIdOwner() != $loggedUserId) {
             return $this->failForbidden('You do not have permission to view this tag.');
         }
 
@@ -121,7 +121,7 @@ class TagController extends ResourceController
         }
 
         $existingTag = $this->tagRepository->findById((int)$id);
-        if (!$existingTag || $existingTag->getIdOwner() !== $loggedUserId) {
+        if (!$existingTag || $existingTag->getIdOwner() != $loggedUserId) {
             return $this->failForbidden('You do not have permission to update this tag.');
         }
 
@@ -155,7 +155,7 @@ class TagController extends ResourceController
         }
 
         $tag = $this->tagRepository->findById($id);
-        if (!$tag || $tag->getIdOwner() !== $loggedUserId) {
+        if (!$tag || $tag->getIdOwner() != $loggedUserId) {
             return $this->failForbidden('You do not have permission to delete this tag.');
         }
 

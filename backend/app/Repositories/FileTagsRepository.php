@@ -19,14 +19,14 @@ class FileTagsRepository
     {
         try {
             // Check if the association already exists
-            $exists = $this->fileTagsModel->where('file_id', $fileTag->getIdFile())
-                                          ->where('tag_id', $fileTag->getIdTag())
+            $exists = $this->fileTagsModel->where('id_file', $fileTag->getIdFile())
+                                          ->where('id_tag', $fileTag->getIdTag())
                                           ->first();
             if ($exists) {
                 return $exists; // Association already exists
             }
 
-            $this->fileTagsModel->insert($fileTag);
+            $this->fileTagsModel->insert(['id_file' => $fileTag->getIdFile(), 'id_tag' => $fileTag->getIdTag()]);
             $fileTag->id = $this->fileTagsModel->getInsertID();
             return $fileTag;
             
@@ -40,7 +40,7 @@ class FileTagsRepository
     public function findTagsOnFile(int $fileId): array|null
     {
         try {
-            return $this->fileTagsModel->where('file_id', $fileId)->findAll();
+            return $this->fileTagsModel->where('id_file', $fileId)->findAll();
         } catch (Throwable $e) {
             log_message('error', 'Error finding file tags by file ID: ' . $e->getMessage());
             return null;
@@ -50,7 +50,7 @@ class FileTagsRepository
     public function findFilesOnTag(int $tagId): array|null
     {
         try {
-            return $this->fileTagsModel->where('tag_id', $tagId)->findAll();
+            return $this->fileTagsModel->where('id_tag', $tagId)->findAll();
         } catch (Throwable $e) {
             log_message('error', 'Error finding file tags by tag ID: ' . $e->getMessage());
             return null;
@@ -75,7 +75,7 @@ class FileTagsRepository
     public function deleteByFileId(int $fileId): bool
     {
         try {
-            return $this->fileTagsModel->where('file_id', $fileId)->delete();
+            return $this->fileTagsModel->where('id_file', $fileId)->delete();
         } catch (Throwable $e) {
             log_message('error', 'Error deleting file tags by file ID: ' . $e->getMessage());
             return false;
@@ -85,7 +85,7 @@ class FileTagsRepository
     public function deleteByTagId(int $tagId): bool
     {
         try {
-            return $this->fileTagsModel->where('tag_id', $tagId)->delete();
+            return $this->fileTagsModel->where('id_tag', $tagId)->delete();
         } catch (Throwable $e) {
             log_message('error', 'Error deleting file tags by tag ID: ' . $e->getMessage());
             return false;

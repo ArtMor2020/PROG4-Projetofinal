@@ -50,7 +50,7 @@ class FileRepository
         try {
             if (empty($ownerId) || !is_int($ownerId)) return null;
 
-            return $this->fileModel->where('owner_id', $ownerId)->findAll();
+            return $this->fileModel->where('id_owner', $ownerId)->findAll();
         } catch (Throwable $e) {
             log_message('error', 'Error finding files by owner ID: ' . $e->getMessage());
             return null;
@@ -66,7 +66,7 @@ class FileRepository
 
             // Step 1: Fetch possible matches (use LIKE for flexibility)
             $rows = $this->fileModel
-                ->where('owner_id', $ownerId)
+                ->where('id_owner', $ownerId)
                 ->like('name', $name) // broader than exact match
                 ->findAll();
 
@@ -110,7 +110,7 @@ class FileRepository
             if (empty($type) || !is_string($type)) return null;
             if (empty($ownerId) || !is_int($ownerId)) return null;
 
-            return $this->fileModel->where('type', $type)->where('owner_id', $ownerId)->findAll();
+            return $this->fileModel->where('type', $type)->where('id_owner', $ownerId)->findAll();
         } catch (Throwable $e) {
             log_message('error', 'Error finding files by type and owner ID: ' . $e->getMessage());
             return null;

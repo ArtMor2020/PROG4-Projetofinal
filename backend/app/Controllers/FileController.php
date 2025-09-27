@@ -31,7 +31,7 @@ class FileController extends ResourceController
         if (!$file) {
             return $this->failNotFound("File with ID {$id} not found.");
         }
-        if (!$loggedUserId || $file->getIdOwner() !== $loggedUserId) {
+        if (!$loggedUserId || $file->getIdOwner() != $loggedUserId) {
             return $this->failForbidden('You do not have permission to view this file.');
         }
 
@@ -57,10 +57,11 @@ class FileController extends ResourceController
      * Search files by name for the logged-in user
      * GET /files/search?name=...
      */
-    public function getFilesByName()
+    public function getFilesByName($name = null)
     {
-        $name = $this->request->getGet('name');
+
         $loggedUserId = $this->request->user->userId ?? null;
+        log_message('info',"Searching files with name: " . $name . " for user ID: " . $loggedUserId);
 
         if (empty($name) || !$loggedUserId) {
             return $this->failValidationError('Missing search name or user not authenticated.');
@@ -99,7 +100,7 @@ class FileController extends ResourceController
         }
 
         $file = $this->fileRepository->findById($id);
-        if (!$file || !$loggedUserId || $file->getIdOwner() !== $loggedUserId) {
+        if (!$file || !$loggedUserId || $file->getIdOwner() != $loggedUserId) {
             return $this->failForbidden('You do not have permission to delete this file.');
         }
 
@@ -124,7 +125,7 @@ class FileController extends ResourceController
         }
 
         $file = $this->fileRepository->findById($id);
-        if (!$file || !$loggedUserId || $file->getIdOwner() !== $loggedUserId) {
+        if (!$file || !$loggedUserId || $file->getIdOwner() != $loggedUserId) {
             return $this->failForbidden('You do not have permission to update this file.');
         }
 

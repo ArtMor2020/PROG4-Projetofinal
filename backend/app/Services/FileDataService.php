@@ -26,12 +26,12 @@ class FileDataService
     }
 
     // Recieves a file and an array of tag names, creates any new tags the owner doesnt have, associates them with the file, and saves everything to the database.
-    public function uploadFileWithTags($fileData, array $tagNames, int $idOwner): FileEntity|null
+    public function uploadFileWithTags($fileData, array $tagData, int $idOwner): FileEntity|null
     {
         try{
             // Save file to disk
-            $name = $this->saveFileToDisk($fileData);
-            if (!$name) {
+            $path = $this->saveFileToDisk($fileData);
+            if (!$path) {
                 return null; // File saving failed
             }
             
@@ -40,25 +40,35 @@ class FileDataService
 
             // Save file metadata
             $fileEntity = new FileEntity();
-            $fileEntity->setName($name);
+            $fileEntity->setName($fileData->getClientName());
             $fileEntity->setIdOwner($idOwner);
             $fileEntity->setType(
                 $this->getExtensionType(pathinfo($fileData->getClientName(), PATHINFO_EXTENSION))
             );
+            $fileEntity->setPath($path);
+
+            log_message('info', 'Saving file entity: ' . json_encode($fileEntity));
 
             $fileEntity = $this->fileRepository->create($fileEntity);
+            log_message('info', 'File entity saved: ' . json_encode($fileEntity));
             if (!$fileEntity) {
                 $this->db->transRollback();
                 return null;
             }
 
             // Process tags
-            foreach ($tagNames as $tagName) {
+            foreach ($tagData as $tag) {
+                if (!isset($tag['name'])) {
+                    continue; // skip invalid tags
+                }
 
                 $tagEntity = new TagEntity();
-                $tagEntity->setName($tagName);
+                $tagEntity->setName($tag['name']);
                 $tagEntity->setIdOwner($idOwner);
+                $tagEntity->setDescription($tag['description'] ?? '');
+                $tagEntity->setColor($tag['color'] ?? '#C80000');
                 $tag = $this->tagRepository->create($tagEntity);
+                log_message('info', 'Tag processed: ' . json_encode($tag));
 
                 if ($tag) {
                     $fileTag = new FileTagsEntity();
@@ -67,6 +77,8 @@ class FileDataService
                     $this->fileTagsRepository->create($fileTag);
                 }
             }
+
+            $this->db->transComplete();
 
             return $fileEntity;
 
@@ -90,7 +102,7 @@ class FileDataService
             }
 
             // Step 2: build file path
-            $filePath = WRITEPATH . 'uploads/' . $fileEntity->getName();
+            $filePath = WRITEPATH . 'uploads/' . $fileEntity->getPath();
 
             if (!is_file($filePath)) {
                 log_message('error', "File not found on disk: {$filePath}");
@@ -113,7 +125,7 @@ class FileDataService
             return null; // or throw PageNotFoundException
         }
 
-        $filePath = WRITEPATH . 'uploads/' . $file->getName();
+        $filePath = WRITEPATH . 'uploads/' . $file->getPath();
 
         if (!is_file($filePath)) {
             return null; // File missing on disk

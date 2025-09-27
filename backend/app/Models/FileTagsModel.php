@@ -13,6 +13,6 @@ class FileTagsModel extends Model
 
     protected $allowedFields = [
             'id_file',
-            'id_tag ',
+            'id_tag',
     ];
 }

@@ -31,7 +31,7 @@ class FileTagController extends ResourceController
         }
 
         $file = $this->fileRepository->findById((int)$data['file_id']);
-        if (!$file || $file->getIdOwner() !== $loggedUserId) {
+        if (!$file || $file->getIdOwner() != $loggedUserId) {
             return $this->failForbidden('You do not have permission to tag this file.');
         }
 
@@ -56,7 +56,7 @@ class FileTagController extends ResourceController
         }
 
         $file = $this->fileRepository->findById($fileId);
-        if (!$file || $file->getIdOwner() !== $loggedUserId) {
+        if (!$file || $file->getIdOwner() != $loggedUserId) {
             return $this->failForbidden('You do not have permission to view tags for this file.');
         }
 
@@ -103,7 +103,7 @@ class FileTagController extends ResourceController
 
         $fileTag = $this->fileTagRepository->find($id);
         $file = $fileTag ? $this->fileRepository->findById($fileTag->getIdFile()) : null;
-        if (!$file || $file->getIdOwner() !== $loggedUserId) {
+        if (!$file || $file->getIdOwner() != $loggedUserId) {
             return $this->failForbidden('You do not have permission to delete this association.');
         }
 
@@ -126,7 +126,7 @@ class FileTagController extends ResourceController
         }
 
         $file = $this->fileRepository->findById($fileId);
-        if (!$file || $file->getIdOwner() !== $loggedUserId) {
+        if (!$file || $file->getIdOwner() != $loggedUserId) {
             return $this->failForbidden('You do not have permission to delete tags for this file.');
         }
 
