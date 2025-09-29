@@ -267,7 +267,7 @@ export default function FileEditorPage() {
     }
   };
 
-  if (!file) return <p className="p-6 text-white">Loading file...</p>;
+  if (!file) return <p className="p-6 text-white">Carregando arquivo...</p>;
 
   const mime = mimeForType(file);
 
@@ -299,7 +299,7 @@ export default function FileEditorPage() {
           ) : file.type === "VIDEO" ? (
             <video controls className="max-h-60 rounded">
               <source src={`data:${mime};base64,${fileContent}`} type={mime} />
-              Your browser does not support the video tag.
+              Seu navegador nao suporta esse video.
             </video>
           ) : (
             <a
@@ -307,17 +307,17 @@ export default function FileEditorPage() {
               download={file.name}
               className="underline"
             >
-              Download {file.name}
+              Baixar {file.name}
             </a>
           )
         ) : (
-          <p>No preview available</p>
+          <p>Preview indisponivel</p>
         )}
       </div>
 
       {/* File name */}
       <div className="mb-6 w-full max-w-md">
-        <label className="block mb-2">File Name</label>
+        <label className="block mb-2">Nome do arquivo</label>
         <input
           type="text"
           value={name}
@@ -343,14 +343,14 @@ export default function FileEditorPage() {
         <div className="flex gap-2 items-center p-2 rounded bg-gray-800 mt-2">
           <input
             type="text"
-            placeholder="Tag name"
+            placeholder="Nome da tag"
             value={newTag.name}
             onChange={(e) => setNewTag({ ...newTag, name: e.target.value })}
             className="p-1 rounded bg-gray-700"
           />
           <input
             type="text"
-            placeholder="Description"
+            placeholder="Descrição"
             value={newTag.description}
             onChange={(e) => setNewTag({ ...newTag, description: e.target.value })}
             className="p-1 rounded bg-gray-700"
@@ -362,7 +362,7 @@ export default function FileEditorPage() {
             className="w-12 h-8 p-0 rounded border border-gray-500"
           />
           <button onClick={addTag} className="px-3 py-1 bg-blue-600 rounded hover:bg-blue-700">
-            + Add
+            + Addicionar Tag
           </button>
         </div>
       </div>
@@ -373,10 +373,10 @@ export default function FileEditorPage() {
           {loading ? "Saving..." : "Save"}
         </button>
         <button onClick={() => router.push("/files")} className="px-6 py-2 bg-gray-600 rounded shadow hover:bg-gray-700">
-          Cancel
+          Cancelar
         </button>
         <button onClick={handleDelete} className="px-6 py-2 bg-red-600 rounded shadow hover:bg-red-700">
-          Delete File
+          Apagar Arquivo
         </button>
       </div>
     </div>

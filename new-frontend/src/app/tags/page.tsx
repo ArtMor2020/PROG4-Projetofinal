@@ -190,7 +190,8 @@ export default function TagsPage() {
         {tags.map((tag) => (
             <div
                 key={tag.id}
-                className="flex items-center justify-between bg-gray-700 p-3 mb-2 rounded shadow">
+                className="flex items-center justify-between bg-gray-700 p-3 mb-2 rounded shadow"
+                >
                 {/* Tag info in a row */}
                 <div className="flex items-center gap-4"
                 >
@@ -203,18 +204,24 @@ export default function TagsPage() {
                 </div>
 
                 {/* Edit/Delete buttons */}
+                
                 <div className="flex gap-2">
+                <button onClick={() => router.push(`/tags/${tag.id}`)}
+                    className="px-3 py-1 bg-yellow-600 rounded hover:bg-blue-700 transition"
+                >
+                    Ver Arquivos
+                </button>
                 <button
                     onClick={() => setEditingTag({ ...tag })}
                     className="px-3 py-1 bg-blue-600 rounded hover:bg-blue-700 transition"
                 >
-                    Edit
+                    Editar
                 </button>
                 <button
                     onClick={() => handleDelete(tag.id)}
                     className="px-3 py-1 bg-red-600 rounded hover:bg-red-700 transition"
                 >
-                    Delete
+                    Apagar
                 </button>
                 </div>
             </div>
@@ -225,18 +232,18 @@ export default function TagsPage() {
       {editingTag && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-gray-800 rounded-xl p-6 w-96">
-            <h2 className="text-2xl font-semibold mb-4 text-center">Edit Tag</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-center">Editar Tag</h2>
 
             <input
               type="text"
-              placeholder="Name"
+              placeholder="Nome"
               value={editingTag.name}
               onChange={(e) => setEditingTag({ ...editingTag, name: e.target.value })}
               className="w-full px-3 py-2 mb-3 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300 bg-gray-700 text-white"
             />
             <input
               type="text"
-              placeholder="Description"
+              placeholder="Descrição"
               value={editingTag.description}
               onChange={(e) => setEditingTag({ ...editingTag, description: e.target.value })}
               className="w-full px-3 py-2 mb-3 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300 bg-gray-700 text-white"
@@ -253,13 +260,13 @@ export default function TagsPage() {
                 onClick={() => setEditingTag(null)}
                 className="px-4 py-2 bg-gray-600 rounded hover:bg-gray-700 transition"
               >
-                Cancel
+                Cancelar
               </button>
               <button
                 onClick={handleUpdate}
                 className="px-4 py-2 bg-green-600 rounded hover:bg-green-700 transition"
               >
-                Save
+                Salvar
               </button>
             </div>
           </div>
