@@ -31,12 +31,12 @@ $routes->group('api', function(RouteCollection $routes) {
          * File routes
          * -----------------------
          */
-        $routes->get('files', 'FileController::getFilesByOwner');               // all files for logged-in user
-        $routes->get('files/(:num)', 'FileController::getFile/$1');             // get single file
-        $routes->put('files/(:num)', 'FileController::updateFile/$1');          // update file
-        $routes->delete('files/(:num)', 'FileController::deleteFile/$1');       // delete file
-        $routes->get('files/search/(:any)', 'FileController::getFilesByName/$1');         // search files by name
-        $routes->get('files/type/(:any)', 'FileController::getFilesByType/$1'); // filter by type
+        $routes->get('files', 'FileController::getFilesByOwner');                   // all files for logged-in user
+        $routes->get('files/(:num)', 'FileController::getFile/$1');                 // get single file
+        $routes->put('files/(:num)', 'FileController::updateFile/$1');              // update file
+        $routes->delete('files/(:num)', 'FileController::deleteFile/$1');           // delete file
+        $routes->get('files/search/(:any)', 'FileController::getFilesByName/$1');   // search files by name
+        $routes->get('files/type/(:any)', 'FileController::getFilesByType/$1');     // filter by type
 
         /**
          * -----------------------
@@ -45,7 +45,7 @@ $routes->group('api', function(RouteCollection $routes) {
          */
         $routes->post('file/upload', 'FileDataController::uploadFileWithTags');      // upload with tags
         $routes->get('file/(:num)', 'FileDataController::getFileById/$1');           // get base64 content
-        $routes->get('file/content', 'FileDataController::getFilesWithContent'); // get raw content
+        $routes->get('file/content', 'FileDataController::getFilesWithContent');     // get raw content
         $routes->get('file/download/(:num)', 'FileDataController::downloadFile/$1'); // download file
 
         /**
@@ -53,12 +53,12 @@ $routes->group('api', function(RouteCollection $routes) {
          * Tag routes
          * -----------------------
          */
-        $routes->post('tags', 'TagController::create');                  // create tag
-        $routes->get('tags/(:num)', 'TagController::show/$1');           // get tag by ID
-        $routes->get('tags', 'TagController::byOwner');                  // all tags for logged-in user
+        $routes->post('tags', 'TagController::create');                            // create tag
+        $routes->get('tags/(:num)', 'TagController::show/$1');                     // get tag by ID
+        $routes->get('tags', 'TagController::byOwner');                            // all tags for logged-in user
         $routes->get('tags/search/(:any)', 'TagController::searchByName/$1');      // search tags
-        $routes->put('tags/(:num)', 'TagController::update/$1');         // update tag
-        $routes->delete('tags/(:num)', 'TagController::delete/$1');      // delete tag
+        $routes->put('tags/(:num)', 'TagController::update/$1');                   // update tag
+        $routes->delete('tags/(:num)', 'TagController::delete/$1');                // delete tag
 
         /**
          * -----------------------

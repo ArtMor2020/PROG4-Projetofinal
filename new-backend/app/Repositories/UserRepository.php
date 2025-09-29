@@ -15,6 +15,9 @@ class UserRepository
         $this->userModel = new UserModel();
     }
 
+    /**
+     * Authenticates user
+     */
     public function authenticate(string $email, string $password): ?UserEntity
     {
         $user = $this->userModel->where('email', $email)->where('is_deleted', false)->first();
@@ -25,30 +28,33 @@ class UserRepository
         return $user;
     }
 
+    /**
+     * Create user
+     */
     public function create(UserEntity $user): ?UserEntity
     {
         try {
-            // Check if email already exists
+            // check if email already exists
             $existingUser = $this->userModel->where('email', $user->getEmail())
                                             ->where('is_deleted', false)
                                             ->first();
             if ($existingUser) {
-                // Email already in use
                 return null;
             }
 
-            // Insert new user
+            // create new user
             $this->userModel->insert($user);
             $user->setId($this->userModel->getInsertID());
             $user->setPassword('');
             return $user;
         } catch (Throwable $e) {
-            // Optionally log the error $e->getMessage()
             return null;
         }
     }
 
-
+    /**
+     * Updates user
+     */
     public function updateUser(UserEntity $user): bool
     {
         try {
@@ -58,6 +64,9 @@ class UserRepository
         }
     }
 
+    /**
+     * Deletes user
+     */
     public function deleteUser(int $id): bool
     {
         try {

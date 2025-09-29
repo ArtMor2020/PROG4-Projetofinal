@@ -21,6 +21,7 @@ class UserController extends ResourceController
      */
     public function authenticate()
     {
+        // gets login credentials
         $payload = $this->request->getJSON(true);
         $user = $this->userRepository->authenticate(
             $payload['email'] ?? '', 
@@ -31,6 +32,7 @@ class UserController extends ResourceController
             return $this->fail('Invalid credentials', 401);
         }
 
+        // forms jwt structure
         $key = getenv('jwt.secret');
         $iat = time();
         $exp = $iat + (int)getenv('jwt.expiration');
@@ -46,8 +48,11 @@ class UserController extends ResourceController
             ]
         ];
 
+        // makes token for user
         $token = JWT::encode($jwtPayload, $key, 'HS256');
 
+        // sets secure cookie
+        // can use this or json response
         /*
         setcookie(
         'token',
@@ -61,13 +66,15 @@ class UserController extends ResourceController
             ]
         );*/
 
+        // clears password
         $userArray = $user->toArray();
         unset($userArray['password']);
 
+        // returns token
         return $this->respond([
             'status' => 'success',
             'user'   => $userArray,
-            'token'  => $token         // debug
+            'token'  => $token         // this or cookie
         ]);
     }
 
@@ -76,16 +83,18 @@ class UserController extends ResourceController
     */
     public function register()
     {
+        // gets credentials
         $data = $this->request->getJSON(true);
 
-        log_message('debug', 'Registering user with data: ' . json_encode($data));
-
+        // validates credentials
         if (empty($data['email']) || empty($data['password'])) {
             return $this->failValidationErrors('Email and password are required.');
         }
 
+        // hashes passord
         $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
 
+        // creates userentity and registers user
         $user = new UserEntity($data);
         $created = $this->userRepository->create($user);
 
@@ -102,11 +111,14 @@ class UserController extends ResourceController
 
     /**
      * Session info
+     * Used with the cookie token
      */
     public function session()
     {
+        // gets user in session
         $user = $this->request->user ?? null;
 
+        // checks session
         if (!$user) {
             return $this->failUnauthorized('No user in request (invalid token)');
         }
@@ -122,20 +134,25 @@ class UserController extends ResourceController
      */
     public function update($id = null)
     {
+        // gets user in session
         $loggedUserId = $this->request->user->userId ?? null;
         
+        // checks session
         if (!$loggedUserId) {
             return $this->failValidationErrors('User ID is required and user must be authenticated.');
         }
 
+        // gets data and makes entity
         $data = $this->request->getJSON(true);
         $user = new UserEntity($data);
         $user->setId($loggedUserId);
 
+        // if password update, hashes it
         if (!empty($data['password'])) {
             $user->setPassword(password_hash($data['password'], PASSWORD_DEFAULT));
         }
 
+        // updates user data
         $updated = $this->userRepository->updateUser($user);
 
         return $updated
@@ -148,12 +165,15 @@ class UserController extends ResourceController
      */
     public function delete($id = null)
     {
+        // gets session
         $loggedUserId = $this->request->user->userId ?? null;
 
+        // checks session
         if (!$loggedUserId) {
             return $this->failValidationErrors('User ID is required and user must be authenticated.');
         }
 
+        // deletes user
         $deleted = $this->userRepository->deleteUser($loggedUserId);
 
         return $deleted

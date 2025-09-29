@@ -24,8 +24,12 @@ class FileDataService
         $this->fileTagsRepository = new FileTagsRepository();
         $this->db = Database::connect();
     }
-
-    // Recieves a file and an array of tag names, creates any new tags the owner doesnt have, associates them with the file, and saves everything to the database.
+    /**
+     * Recieves a file and an array of tag names, 
+     * creates any new tags the owner doesnt have, 
+     * associates them with the file, 
+     * and saves everything to the database.
+     */
     public function uploadFileWithTags($fileData, array $tagData, int $idOwner): FileEntity|null
     {
         try{
@@ -47,10 +51,8 @@ class FileDataService
             );
             $fileEntity->setPath($path);
 
-            log_message('info', 'Saving file entity: ' . json_encode($fileEntity));
-
             $fileEntity = $this->fileRepository->create($fileEntity);
-            log_message('info', 'File entity saved: ' . json_encode($fileEntity));
+
             if (!$fileEntity) {
                 $this->db->transRollback();
                 return null;
@@ -62,14 +64,15 @@ class FileDataService
                     continue; // skip invalid tags
                 }
 
+                // Makes entity
                 $tagEntity = new TagEntity();
                 $tagEntity->setName($tag['name']);
                 $tagEntity->setIdOwner($idOwner);
                 $tagEntity->setDescription($tag['description'] ?? '');
                 $tagEntity->setColor($tag['color'] ?? '#C80000');
                 $tag = $this->tagRepository->create($tagEntity);
-                log_message('info', 'Tag processed: ' . json_encode($tag));
 
+                // if tag is succesfuly created, create File-Tag association
                 if ($tag) {
                     $fileTag = new FileTagsEntity();
                     $fileTag->setIdFile($fileEntity->getId());
@@ -88,6 +91,9 @@ class FileDataService
         }
     }
     
+    /**
+     * Get file by id
+     */
     public function getFileById(int $fileId): ?string
     {
         try {
@@ -95,13 +101,13 @@ class FileDataService
                 return null;
             }
 
-            // Step 1: get metadata from DB
+            // get metadata from DB
             $fileEntity = $this->fileRepository->findById($fileId);
             if (!$fileEntity) {
-                return null; // file not found in DB
+                return null;
             }
 
-            // Step 2: build file path
+            // build file path
             $filePath = WRITEPATH . 'uploads/' . $fileEntity->getPath();
 
             if (!is_file($filePath)) {
@@ -109,7 +115,7 @@ class FileDataService
                 return null;
             }
 
-            // Step 3: return contents (or you could return path or stream)
+            // return contents 
             return file_get_contents($filePath);
 
         } catch (\Throwable $e) {
@@ -118,24 +124,31 @@ class FileDataService
         }
     }
 
+    /**
+     * Downloads file by ID
+     */
     public function downloadFile(int $fileId)
     {
+        // gets file data
         $file = $this->fileRepository->findById($fileId);
         if (!$file) {
             return null; // or throw PageNotFoundException
         }
 
+        // makes file path
         $filePath = WRITEPATH . 'uploads/' . $file->getPath();
 
         if (!is_file($filePath)) {
             return null; // File missing on disk
         }
 
-        // Return as a download response
+        // Return file as a download response
         return service('response')->download($filePath, null)->setFileName($file->getName());
     }
 
-
+    /**
+     * Saves file to disk
+     */
     public function saveFileToDisk($file): string|false
     {
         $uploadPath = WRITEPATH . 'uploads/';
@@ -151,7 +164,10 @@ class FileDataService
         return $fileName;
     }
 
-        public function getExtensionType(string $EXT): string
+    /**
+     * Gets extension type for a file
+     */
+    public function getExtensionType(string $EXT): string
     {
         $EXT = strtolower($EXT);
         $IMAGE = ['jpg', 'jpeg', 'png', 'webp', 'bmp', 'gif'];

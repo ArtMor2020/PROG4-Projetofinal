@@ -20,13 +20,16 @@ class TagController extends ResourceController
      */
     public function create()
     {
+        // gets data and logged user
         $data = $this->request->getJSON(true);
         $loggedUserId = $this->request->user->userId ?? null;
 
+        // checks if user is logged in
         if (!$loggedUserId) {
             return $this->failUnauthorized('User not authenticated.');
         }
 
+        // checks if data is valid
         if (empty($data['name'])) {
             return $this->failValidationErrors('Tag name is required.');
         }
@@ -35,6 +38,7 @@ class TagController extends ResourceController
         $data['id_owner'] = $loggedUserId;
         log_message('debug', 'Creating tag with data: ' . json_encode($data));
 
+        // makes new tag entity and creates tag
         $tag = new TagEntity($data);
         $created = $this->tagRepository->create($tag);
 
@@ -49,13 +53,16 @@ class TagController extends ResourceController
      */
     public function show($id = null)
     {
+        // get if of user logged in
         $loggedUserId = $this->request->user->userId ?? null;
         $id = (int)$id;
 
+        // checks if id and logged user id are valod
         if ($id <= 0 || !$loggedUserId) {
             return $this->failValidationErrors('Valid tag ID is required and user must be authenticated.');
         }
 
+        // gets tags and checks if logged user owns them
         $tag = $this->tagRepository->findById($id);
         if (!$tag || $tag->getIdOwner() != $loggedUserId) {
             return $this->failForbidden('You do not have permission to view this tag.');
@@ -70,11 +77,13 @@ class TagController extends ResourceController
      */
     public function byOwner()
     {
+        // gets logged user id and checks if its valid
         $loggedUserId = $this->request->user->userId ?? null;
         if (!$loggedUserId) {
             return $this->failUnauthorized('User not authenticated.');
         }
 
+        // gets tags for logged user
         $tags = $this->tagRepository->findAllByOwnerId($loggedUserId);
 
         return $tags
@@ -89,15 +98,18 @@ class TagController extends ResourceController
      */
     public function searchByName($name)
     {
+        // checks user id and validates it
         $loggedUserId = $this->request->user->userId ?? null;
         if (!$loggedUserId) {
             return $this->failUnauthorized('User not authenticated.');
         }
 
+        // validates name
         if (empty($name)) {
             return $this->failValidationErrors('Missing name parameter.');
         }
 
+        // gets tags owned by user by their name
         $tags = $this->tagRepository->findByNameAndOwnerId($name, $loggedUserId);
 
         return $tags
@@ -111,20 +123,24 @@ class TagController extends ResourceController
      */
     public function update($id = null)
     {
+        // validates id
         if (!$id) {
             return $this->failValidationErrors('Tag ID is required.');
         }
 
+        // gets logged user and validates it
         $loggedUserId = $this->request->user->userId ?? null;
         if (!$loggedUserId) {
             return $this->failUnauthorized('User not authenticated.');
         }
 
+        // checks for user permission
         $existingTag = $this->tagRepository->findById((int)$id);
         if (!$existingTag || $existingTag->getIdOwner() != $loggedUserId) {
             return $this->failForbidden('You do not have permission to update this tag.');
         }
 
+        // gets data from request
         $data = $this->request->getJSON(true);
         if (empty($data)) {
             return $this->failValidationError('No update data provided.');
@@ -134,15 +150,14 @@ class TagController extends ResourceController
         if (isset($data['name'])) {
             $existingTag->setName($data['name']);
         }
-
         if (isset($data['description'])) {
             $existingTag->setDescription($data['description']);
         }
-
         if (isset($data['color'])) {
             $existingTag->setColor($data['color']);
         }
 
+        // updates tag
         $updated = $this->tagRepository->updateTag($existingTag);
 
         return $updated
@@ -155,18 +170,22 @@ class TagController extends ResourceController
      */
     public function delete($id = null)
     {
+        // gets logged user id
         $loggedUserId = $this->request->user->userId ?? null;
         $id = (int)$id;
 
+        // checks if user and tag id are valid
         if ($id <= 0 || !$loggedUserId) {
             return $this->failValidationErrors('Valid tag ID is required and user must be authenticated.');
         }
 
+        // checks if user owns tag
         $tag = $this->tagRepository->findById($id);
         if (!$tag || $tag->getIdOwner() != $loggedUserId) {
             return $this->failForbidden('You do not have permission to delete this tag.');
         }
 
+        // deletes tag
         $deleted = $this->tagRepository->deleteTag($id);
         return $deleted
             ? $this->respondDeleted(['message' => "Tag {$id} deleted successfully."])

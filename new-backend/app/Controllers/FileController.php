@@ -28,12 +28,15 @@ class FileController extends ResourceController
             return $this->failValidationError('Invalid file ID.');
         }
 
+        // gets file and id of logged user
         $file = $this->fileRepository->findById($id);
         $loggedUserId = $this->request->user->userId ?? null;
 
+        // if no file was found returns failNotFound
         if (!$file) {
             return $this->failNotFound("File with ID {$id} not found.");
         }
+        // if file doesnt belong to logged user returns forbidden
         if (!$loggedUserId || $file->getIdOwner() != $loggedUserId) {
             return $this->failForbidden('You do not have permission to view this file.');
         }
@@ -47,11 +50,13 @@ class FileController extends ResourceController
      */
     public function getFilesByOwner()
     {
+        // check if user is authenticated
         $loggedUserId = $this->request->user->userId ?? null;
         if (!$loggedUserId) {
             return $this->failUnauthorized('User not authenticated.');
         }
 
+        // gets files for logged user
         $files = $this->fileRepository->findByOwnerId($loggedUserId);
         return $this->respond($files ?? []);
     }
@@ -63,15 +68,18 @@ class FileController extends ResourceController
     public function getFilesByName($name = null)
     {
 
+        // gets logged user id
         $loggedUserId = $this->request->user->userId ?? null;
-        log_message('info',"Searching files with name: " . $name . " for user ID: " . $loggedUserId);
 
         if (empty($name) || !$loggedUserId) {
             return $this->failValidationError('Missing search name or user not authenticated.');
         }
 
+        //gets files for logged user
         $files = $this->fileRepository->findByNameAndOwnerId($name, $loggedUserId);
         $fullFiles = [];
+
+        // formats files
         foreach ($files as $file) {
             $fullFiles[] = [
                 'id'         => $file->getId(),
@@ -83,6 +91,7 @@ class FileController extends ResourceController
                 'content'    => base64_encode($this->fileDataService->getFileById($file->getId()))
             ];
         }
+
         return $this->respond($fullFiles ?? []);
     }
 
@@ -92,11 +101,13 @@ class FileController extends ResourceController
      */
     public function getFilesByType($type = null)
     {
+        // checks if there is a type and logged user
         $loggedUserId = $this->request->user->userId ?? null;
         if (empty($type) || !$loggedUserId) {
             return $this->failValidationError('Missing type or user not authenticated.');
         }
 
+        // gets files for logged user
         $files = $this->fileRepository->findByTypeAndOwnerId($type, $loggedUserId);
         return $this->respond($files ?? []);
     }
@@ -108,6 +119,7 @@ class FileController extends ResourceController
     public function deleteFile($id = null)
     {
         $id = (int) $id;
+        // gets logged user id
         $loggedUserId = $this->request->user->userId ?? null;
 
         if ($id <= 0) {
@@ -115,10 +127,13 @@ class FileController extends ResourceController
         }
 
         $file = $this->fileRepository->findById($id);
+
+        // checks if user has permission to delete file
         if (!$file || !$loggedUserId || $file->getIdOwner() != $loggedUserId) {
             return $this->failForbidden('You do not have permission to delete this file.');
         }
 
+        // deletes file
         $success = $this->fileRepository->deleteById($id);
         return $success
             ? $this->respondDeleted(['message' => "File {$id} deleted successfully."])
@@ -132,18 +147,27 @@ class FileController extends ResourceController
     public function updateFile($id = null)
     {
         $id = (int) $id;
+
+        // gets request data
         $data = $this->request->getJSON(true);
+
+        //gets logged user id
         $loggedUserId = $this->request->user->userId ?? null;
 
+        // checks id and data
         if ($id <= 0 || empty($data)) {
             return $this->failValidationError('Invalid file ID or missing update data.');
         }
 
+        // gets file
         $file = $this->fileRepository->findById($id);
+
+        // check if logged user has permission
         if (!$file || !$loggedUserId || $file->getIdOwner() != $loggedUserId) {
             return $this->failForbidden('You do not have permission to update this file.');
         }
 
+        // sets same and data if they are valid
         if (isset($data['name'])) {
             $file->setName($data['name']);
         }
