@@ -12,8 +12,8 @@ Arthur Romanatto Moro
 
 # Links Relevantes
 
-Demonstração MVP - placeholder
-Deploy - placeholder
+* Demonstração MVP - https://youtu.be/W-tJY6ZazdU?si=QSUbTU1KTvMpQ-zR
+* Deploy - placeholder
 
 --
 
@@ -99,4 +99,5 @@ Configurar o .env:
 * Comentar frontend e backend
 * Fazer deploy
 * Postar demonstração MVP
+
 
