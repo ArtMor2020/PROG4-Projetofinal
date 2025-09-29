@@ -10,6 +10,13 @@ Arthur Romanatto Moro
 
 ---
 
+# Links Relevantes
+
+Demonstração MVP - placeholder
+Deploy - placeholder
+
+--
+
 ## Descrição do Projeto
 
 Este projeto é um MVP para um sistema de organização de arquivos armazenados na nuvem.
@@ -89,6 +96,7 @@ Configurar o .env:
 
 ## Proximos Passos
 
-* Implementar autenticação
-* Integração inicial frontend-backend
-* Debugging
+* Comentar frontend e backend
+* Fazer deploy
+* Postar demonstração MVP
+
