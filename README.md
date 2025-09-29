@@ -10,12 +10,12 @@ Arthur Romanatto Moro
 
 ---
 
-# Links Relevantes
+## Links Relevantes
 
 * Demonstração MVP - https://youtu.be/W-tJY6ZazdU?si=QSUbTU1KTvMpQ-zR
-* Deploy - placeholder
+* Deploy - 
 
---
+---
 
 ## Descrição do Projeto
 
@@ -95,8 +95,8 @@ Configurar o .env:
 
 ## Proximos Passos
 
-* Comentar frontend e backend
 * Fazer deploy
+
 
 
 
