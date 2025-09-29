@@ -60,7 +60,7 @@ Banco de Dados:
 
   ```bash
   cd backend
-  cp .env.example .env
+  cp env .env
   composer install
   php spark migrate
   php spark serve
@@ -70,7 +70,6 @@ Banco de Dados:
 
   ```bash
   cd frontend
-  cp env .env
   npm install
   npm run dev
   ```
@@ -98,6 +97,6 @@ Configurar o .env:
 
 * Comentar frontend e backend
 * Fazer deploy
-* Postar demonstração MVP
+
 
 
