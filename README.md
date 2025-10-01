@@ -74,7 +74,7 @@ Banco de Dados:
   npm run dev
   ```
 
-🗄️ Banco de Dados
+Banco de Dados
 
 Criar banco tagscribe no MySQL:
 
@@ -96,6 +96,7 @@ Configurar o .env:
 ## Proximos Passos
 
 * Fazer deploy
+
 
 
 
