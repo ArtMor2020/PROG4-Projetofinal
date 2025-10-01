@@ -76,7 +76,7 @@ Banco de Dados:
 
 Banco de Dados
 
-Criar banco tagscribe no MySQL:
+## Criar banco tagscribe no MySQL:
 
   ```bash
   CREATE DATABASE tagscribe;
@@ -96,6 +96,7 @@ Configurar o .env:
 ## Proximos Passos
 
 * Fazer deploy
+
 
 
 
